@@ -21,6 +21,7 @@ import { toast } from 'sonner'
 
 const formSchema = z.object({
   url: z.string().url({ message: 'Please enter a valid URL (including http/https)' }),
+  category: z.string().min(1, { message: 'Please enter a category' }),
 })
 
 export default function AddBookmarkDialog() {
@@ -36,13 +37,14 @@ export default function AddBookmarkDialog() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       url: '',
+      category: 'General',
     },
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true)
     try {
-      await addBookmark(values.url)
+      await addBookmark(values.url, values.category)
       toast.success('Bookmark added successfully')
       reset()
       setOpen(false)
@@ -67,12 +69,14 @@ export default function AddBookmarkDialog() {
           <DialogHeader>
             <DialogTitle>Add New Bookmark</DialogTitle>
             <DialogDescription>
-              Enter the URL of the page you want to save. We'll automatically fetch the details.
+              Enter the URL and category for your bookmark.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="flex flex-col gap-2">
+              <label htmlFor="url" className="text-sm font-medium">URL</label>
               <Input
+                id="url"
                 {...register('url')}
                 placeholder="https://example.com"
                 disabled={isSubmitting}
@@ -80,6 +84,19 @@ export default function AddBookmarkDialog() {
               />
               {errors.url && (
                 <p className="text-xs text-destructive">{errors.url.message}</p>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <label htmlFor="category" className="text-sm font-medium">Category</label>
+              <Input
+                id="category"
+                {...register('category')}
+                placeholder="e.g., Work, Reading, Coding"
+                disabled={isSubmitting}
+                className={errors.category ? 'border-destructive focus-visible:ring-destructive' : ''}
+              />
+              {errors.category && (
+                <p className="text-xs text-destructive">{errors.category.message}</p>
               )}
             </div>
           </div>

@@ -22,6 +22,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
+import { Badge } from '@/components/ui/badge'
+
 interface BookmarkCardProps {
   bookmark: Bookmark
 }
@@ -29,6 +31,7 @@ interface BookmarkCardProps {
 export default function BookmarkCard({ bookmark }: BookmarkCardProps) {
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const categoryLabel = bookmark.category?.trim() || 'Uncategorized'
 
   const handleDelete = async () => {
     setIsDeleting(true)
@@ -62,6 +65,11 @@ export default function BookmarkCard({ bookmark }: BookmarkCardProps) {
             ) : (
               <ExternalLinkIcon className="h-12 w-12 text-muted-foreground/30" />
             )}
+            <div className="absolute top-2 left-2 z-20">
+              <Badge variant="secondary" className="font-semibold shadow-sm bg-background/80 backdrop-blur-sm">
+                {categoryLabel}
+              </Badge>
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
           </div>
         </CardHeader>

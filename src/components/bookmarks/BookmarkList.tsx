@@ -5,7 +5,8 @@ import { createClient } from '@/utils/supabase/client'
 import { Bookmark } from '@/types'
 import BookmarkCard from './BookmarkCard'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BookmarkIcon } from 'lucide-react'
+import { BookmarkIcon, FilterIcon } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
 interface BookmarkListProps {
   initialBookmarks: Bookmark[]
@@ -14,7 +15,19 @@ interface BookmarkListProps {
 
 export default function BookmarkList({ initialBookmarks, userId }: BookmarkListProps) {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(initialBookmarks)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const supabase = createClient()
+
+  const normalizeCategory = (category: string | null | undefined) =>
+    (category?.trim() || 'Uncategorized')
+
+  const categories = Array.from(
+    new Set(bookmarks.map((bookmark) => normalizeCategory(bookmark.category)))
+  ).sort()
+
+  const filteredBookmarks = selectedCategory
+    ? bookmarks.filter((bookmark) => normalizeCategory(bookmark.category) === selectedCategory)
+    : bookmarks
 
   useEffect(() => {
     setBookmarks(initialBookmarks)
@@ -67,21 +80,47 @@ export default function BookmarkList({ initialBookmarks, userId }: BookmarkListP
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      <AnimatePresence mode="popLayout">
-        {bookmarks.map((bookmark) => (
-          <motion.div
-            key={bookmark.id}
-            layout
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.2 }}
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-2 pb-2">
+        <div className="flex items-center gap-2 mr-2 text-sm font-medium text-muted-foreground">
+          <FilterIcon className="h-4 w-4" />
+          <span>Filter:</span>
+        </div>
+        <Badge
+          variant={selectedCategory === null ? 'default' : 'outline'}
+          className="cursor-pointer px-3 py-1 text-xs"
+          onClick={() => setSelectedCategory(null)}
+        >
+          All
+        </Badge>
+        {categories.map((category) => (
+          <Badge
+            key={`category-${category}`}
+            variant={selectedCategory === category ? 'default' : 'outline'}
+            className="cursor-pointer px-3 py-1 text-xs"
+            onClick={() => setSelectedCategory(category)}
           >
-            <BookmarkCard bookmark={bookmark} />
-          </motion.div>
+            {category}
+          </Badge>
         ))}
-      </AnimatePresence>
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <AnimatePresence mode="popLayout">
+          {filteredBookmarks.map((bookmark) => (
+            <motion.div
+              key={bookmark.id}
+              layout
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+            >
+              <BookmarkCard bookmark={bookmark} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
     </div>
   )
 }

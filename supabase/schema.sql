@@ -6,8 +6,13 @@ CREATE TABLE IF NOT EXISTS public.bookmarks (
     title TEXT,
     description TEXT,
     favicon_url TEXT,
+    category TEXT DEFAULT 'Uncategorized',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL
 );
+
+-- Add category column if this table existed before the feature was added
+ALTER TABLE public.bookmarks
+ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'Uncategorized';
 
 -- Enable RLS
 ALTER TABLE public.bookmarks ENABLE ROW LEVEL SECURITY;

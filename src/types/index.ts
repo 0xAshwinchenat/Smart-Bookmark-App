@@ -5,5 +5,6 @@ export interface Bookmark {
   title: string | null
   description: string | null
   favicon_url: string | null
+  category: string
   created_at: string
 }

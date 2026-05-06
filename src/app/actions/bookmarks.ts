@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { getMetadata } from '@/lib/metadata'
 import { revalidatePath } from 'next/cache'
 
-export async function addBookmark(url: string) {
+export async function addBookmark(url: string, category: string = 'Uncategorized') {
   const supabase = await createClient()
 
   const {
@@ -28,6 +28,7 @@ export async function addBookmark(url: string) {
     {
       user_id: user.id,
       url,
+      category,
       ...metadata,
     },
   ])
