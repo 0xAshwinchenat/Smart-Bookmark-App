@@ -42,6 +42,9 @@ I chose **Auto-fetch website favicon + metadata** because it significantly eleva
 ### 5. Future Improvements
 If I had more time, I would implement **bulk import/export** and **saved smart filters**. Categories now handle the day-to-day organization, but power users would benefit from faster onboarding and reusable views.
 
+### 6. One Bonus Feature
+- I implemented **Bookmark Categories/Tags**. While metadata makes the app look great, tags provide the organization needed for users with hundreds of bookmarks, allowing for powerful filtering and search capabilities.
+
 ## Getting Started
 ... (rest of the content)
 
