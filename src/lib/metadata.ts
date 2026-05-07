@@ -7,13 +7,16 @@ export async function getMetadata(url: string) {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
       },
+      signal: AbortSignal.timeout(8000), // 8 second timeout
     })
 
     if (!response.ok) {
+      console.warn(`[Metadata] Failed to fetch ${url}: status ${response.status}`)
       throw new Error('Failed to fetch the URL')
     }
 
     const html = await response.text()
+    console.log(`[Metadata] Successfully fetched ${url}`)
     const $ = cheerio.load(html)
 
     const title = 
@@ -49,7 +52,8 @@ export async function getMetadata(url: string) {
       favicon_url: favicon,
     }
   } catch (error) {
-    console.error('Metadata fetch error:', error)
+    const errorMsg = error instanceof Error ? error.message : String(error)
+    console.error(`[Metadata] Error fetching ${url}:`, errorMsg)
     return {
       title: url,
       description: null,
